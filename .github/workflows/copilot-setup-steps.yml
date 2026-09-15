@@ -35,30 +35,19 @@ jobs:
 
       - name: Validate Jira Rovo MCP prerequisites
         env:
-          COPILOT_MCP_JIRA_SITE_URL: ${{ vars.COPILOT_MCP_JIRA_SITE_URL }}
-          COPILOT_MCP_JIRA_USER_EMAIL: ${{ vars.COPILOT_MCP_JIRA_USER_EMAIL }}
-          COPILOT_MCP_JIRA_API_TOKEN: ${{ secrets.COPILOT_MCP_JIRA_API_TOKEN }}
+          COPILOT_MCP_ATLASSIAN_BASIC_AUTH: ${{ secrets.COPILOT_MCP_ATLASSIAN_BASIC_AUTH }}
         run: |
-          missing=0
-
-          if [ -z "$COPILOT_MCP_JIRA_SITE_URL" ]; then
-            echo "::warning::Missing repo environment variable COPILOT_MCP_JIRA_SITE_URL"
-            missing=1
-          fi
-
-          if [ -z "$COPILOT_MCP_JIRA_USER_EMAIL" ]; then
-            echo "::warning::Missing repo environment variable COPILOT_MCP_JIRA_USER_EMAIL"
-            missing=1
-          fi
-
-          if [ -z "$COPILOT_MCP_JIRA_API_TOKEN" ]; then
-            echo "::warning::Missing repo environment secret COPILOT_MCP_JIRA_API_TOKEN"
-            missing=1
-          fi
-
-          if [ "$missing" -eq 1 ]; then
-            echo "Jira Rovo MCP prerequisites are not fully configured for Copilot sessions yet."
+          if [ -z "$COPILOT_MCP_ATLASSIAN_BASIC_AUTH" ]; then
+            echo "::warning::Missing repo environment secret COPILOT_MCP_ATLASSIAN_BASIC_AUTH"
             exit 0
           fi
 
-          echo "Jira Rovo MCP prerequisites are configured."
+          if ! decoded="$(printf '%s' "$COPILOT_MCP_ATLASSIAN_BASIC_AUTH" | base64 --decode 2>/dev/null)" ||
+             [[ "$decoded" != *:* ]] ||
+             [ -z "${decoded%%:*}" ] ||
+             [ -z "${decoded#*:}" ]; then
+            echo "::warning::COPILOT_MCP_ATLASSIAN_BASIC_AUTH must be Base64-encoded email:api_token without the Basic prefix"
+            exit 0
+          fi
+
+          echo "Jira Rovo MCP Basic authentication is configured."
