@@ -19,14 +19,16 @@ The GitHub Copilot for Jira configuration page shows `PremierTechDigital` as a c
 
 Copilot cloud-agent sessions authenticate to Atlassian Rovo MCP v2 with a personal Atlassian API token using HTTP Basic authentication.
 
-Configure this secret in the repository `copilot` environment:
+Configure this under **Settings → Secrets and variables → Agents → Secrets**:
 
 - Secret: `COPILOT_MCP_ATLASSIAN_BASIC_AUTH`
 - Value: the Base64 encoding of `email:api_token`, without a `Basic` prefix
 
 The cloud-agent MCP configuration consumes the secret directly through the `Authorization` header value `Basic $COPILOT_MCP_ATLASSIAN_BASIC_AUTH` when connecting to `https://mcp.atlassian.com/v2/mcp`.
 
-The setup workflow checks that the secret exists and decodes to a non-empty `email:api_token` value without printing either credential. The Jira site URL remains `https://premiertechdigital.atlassian.net`, but it is not part of the Basic authorization header.
+GitHub exposes names prefixed with `COPILOT_MCP_` only to configured MCP servers. They are intentionally unavailable to the agent shell and to setup workflow expressions, so `copilot-setup-steps.yml` must not test them through `${{ secrets.* }}` or `${{ vars.* }}`. Validate Rovo from the cloud-agent session's **Start MCP Servers** log and by invoking a Rovo tool.
+
+The Jira site URL is `https://premiertechdigital.atlassian.net`, but it is not part of the Basic authorization header. Separate `COPILOT_MCP_JIRA_SITE_URL`, `COPILOT_MCP_JIRA_USER_EMAIL`, and `COPILOT_MCP_JIRA_API_TOKEN` values are not required by this MCP configuration.
 
 ## Setup flow
 
