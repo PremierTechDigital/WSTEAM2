@@ -22,7 +22,7 @@ flowchart LR
 	Jira[Jira Cloud<br/>premiertechdigital.atlassian.net]
 	Copilot[GitHub Copilot for Jira<br/>configuration]
 	Org[GitHub organization<br/>PremierTechDigital]
-	App[GitHub App<br/>authorized for selected repositories]
+	App[GitHub Copilot for Jira App<br/>verify installation and repository access]
 	Repo[Repository<br/>WSTEAM2]
 	Seats[GitHub Copilot<br/>assigned seats]
 	Team[Authorized team members]
@@ -77,6 +77,38 @@ GitHub for Jira development links and GitHub Copilot for Jira are related but di
 - **GitHub Copilot for Jira** provides the Copilot-specific Jira integration and requires both an active Copilot entitlement and the corresponding Jira app installation.
 
 The connection does not override Jira permissions, GitHub repository access, or GitHub Copilot licensing.
+
+## Automation pilot
+
+The first pilot uses Jira Automation to trigger GitHub Copilot cloud agent when a new work item is created. Copilot uses the Jira work item as context and opens a pull request in `PremierTechDigital/WSTEAM2`.
+
+```mermaid
+flowchart LR
+	Created[New Jira work item]
+	Rule[Jira Automation<br/>Work item created]
+	Agent[GitHub Copilot cloud agent<br/>Auto model]
+	Repo[PremierTechDigital/WSTEAM2<br/>main]
+	PullRequest[Documentation-only pull request]
+	Activity[Agent activity shown<br/>on the Jira work item]
+
+	Created --> Rule --> Agent
+	Agent --> Repo --> PullRequest
+	Agent --> Activity
+```
+
+The GitHub Copilot action starts a coding-agent session; it does not automatically write an AI response into a Jira custom field. The supported output is agent activity in Jira and a pull request in GitHub. A separate Jira/Rovo agent or an external service that calls an AI model and the Jira REST API is required for unattended custom-field updates.
+
+### Pilot prompt
+
+Use this prompt in the Jira Automation action:
+
+```text
+Review Jira work item {{issue.key}} and use its title, description, request type,
+labels, and comments as context. Work only in PremierTechDigital/WSTEAM2 on the
+main branch. Do not modify application code. Create triage/{{issue.key}}-summary.md
+with sections for Summary, Impact, Reproduction clues, Suggested next steps, and
+Clarifying questions. Open a pull request for review.
+```
 
 ## Security
 
