@@ -6,14 +6,27 @@ This repository records the team setup for GitHub Copilot for Jira. It is intend
 
 | Setting                 | Value                                                       |
 | ----------------------- | ----------------------------------------------------------- |
-| Jira site               | `https://premiertechdigital.atlassian.net/`               |
-| GitHub organization     | `PremierTechDigital`                                      |
-| Repository              | `PremierTechDigital/WSTEAM2`                              |
+| Jira site               | `https://premiertechdigital.atlassian.net/`                 |
+| GitHub organization     | `PremierTechDigital`                                        |
+| Repository              | `PremierTechDigital/WSTEAM2`                                |
 | Intended scope          | All Jira projects                                           |
-| Configuration account   | `FrancoisFoster`                                          |
+| Configuration account   | `FrancoisFoster`                                            |
 | Organization connection | Connected in the GitHub Copilot for Jira configuration page |
 
 The GitHub Copilot for Jira configuration page shows `PremierTechDigital` as a connected organization. This establishes the organization-level connection; access is governed by each person's GitHub Copilot entitlement and their existing Jira and GitHub permissions.
+
+## Jira Rovo MCP access
+
+Copilot cloud-agent sessions authenticate to Atlassian Rovo MCP v2 with a personal Atlassian API token using HTTP Basic authentication.
+
+Configure this secret in the repository `copilot` environment:
+
+- Secret: `COPILOT_MCP_ATLASSIAN_BASIC_AUTH`
+- Value: the Base64 encoding of `email:api_token`, without a `Basic` prefix
+
+The cloud-agent MCP configuration consumes the secret directly through the `Authorization` header value `Basic $COPILOT_MCP_ATLASSIAN_BASIC_AUTH` when connecting to `https://mcp.atlassian.com/v2/mcp`.
+
+The setup workflow checks that the secret exists and decodes to a non-empty `email:api_token` value without printing either credential. The Jira site URL remains `https://premiertechdigital.atlassian.net`, but it is not part of the Basic authorization header.
 
 ## Setup flow
 

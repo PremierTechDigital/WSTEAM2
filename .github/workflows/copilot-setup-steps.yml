@@ -32,3 +32,22 @@ jobs:
             exit 0
           fi
           npx -y @azure-devops/mcp ptdigital --authentication pat -d core work-items repositories wiki pipelines search --help >/dev/null
+
+      - name: Validate Jira Rovo MCP prerequisites
+        env:
+          COPILOT_MCP_ATLASSIAN_BASIC_AUTH: ${{ secrets.COPILOT_MCP_ATLASSIAN_BASIC_AUTH }}
+        run: |
+          if [ -z "$COPILOT_MCP_ATLASSIAN_BASIC_AUTH" ]; then
+            echo "::warning::Missing repo environment secret COPILOT_MCP_ATLASSIAN_BASIC_AUTH"
+            exit 0
+          fi
+
+          if ! decoded="$(printf '%s' "$COPILOT_MCP_ATLASSIAN_BASIC_AUTH" | base64 --decode 2>/dev/null)" ||
+             [[ "$decoded" != *:* ]] ||
+             [ -z "${decoded%%:*}" ] ||
+             [ -z "${decoded#*:}" ]; then
+            echo "::warning::COPILOT_MCP_ATLASSIAN_BASIC_AUTH must be Base64-encoded email:api_token without the Basic prefix"
+            exit 0
+          fi
+
+          echo "Jira Rovo MCP Basic authentication is configured."
