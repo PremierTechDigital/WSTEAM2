@@ -15,6 +15,18 @@ This repository records the team setup for GitHub Copilot for Jira. It is intend
 
 The GitHub Copilot for Jira configuration page shows `PremierTechDigital` as a connected organization. This establishes the organization-level connection; access is governed by each person's GitHub Copilot entitlement and their existing Jira and GitHub permissions.
 
+## Missing prerequisite for Jira Rovo MCP access
+
+The missing prerequisite is repository-level Copilot environment configuration for Jira MCP credentials. Without these values, Copilot sessions cannot query Jira items directly.
+
+Configure these in the repository `copilot` environment:
+
+- Variable: `COPILOT_MCP_JIRA_SITE_URL` (example: `https://premiertechdigital.atlassian.net`)
+- Variable: `COPILOT_MCP_JIRA_USER_EMAIL`
+- Secret: `COPILOT_MCP_JIRA_API_TOKEN`
+
+The Copilot setup workflow now validates that these prerequisites exist and reports warnings when they are missing.
+
 ## Setup flow
 
 ```mermaid

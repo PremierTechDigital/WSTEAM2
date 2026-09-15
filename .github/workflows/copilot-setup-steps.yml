@@ -32,3 +32,33 @@ jobs:
             exit 0
           fi
           npx -y @azure-devops/mcp ptdigital --authentication pat -d core work-items repositories wiki pipelines search --help >/dev/null
+
+      - name: Validate Jira Rovo MCP prerequisites
+        env:
+          COPILOT_MCP_JIRA_SITE_URL: ${{ vars.COPILOT_MCP_JIRA_SITE_URL }}
+          COPILOT_MCP_JIRA_USER_EMAIL: ${{ vars.COPILOT_MCP_JIRA_USER_EMAIL }}
+          COPILOT_MCP_JIRA_API_TOKEN: ${{ secrets.COPILOT_MCP_JIRA_API_TOKEN }}
+        run: |
+          missing=0
+
+          if [ -z "$COPILOT_MCP_JIRA_SITE_URL" ]; then
+            echo "::warning::Missing repo environment variable COPILOT_MCP_JIRA_SITE_URL"
+            missing=1
+          fi
+
+          if [ -z "$COPILOT_MCP_JIRA_USER_EMAIL" ]; then
+            echo "::warning::Missing repo environment variable COPILOT_MCP_JIRA_USER_EMAIL"
+            missing=1
+          fi
+
+          if [ -z "$COPILOT_MCP_JIRA_API_TOKEN" ]; then
+            echo "::warning::Missing repo environment secret COPILOT_MCP_JIRA_API_TOKEN"
+            missing=1
+          fi
+
+          if [ "$missing" -eq 1 ]; then
+            echo "Jira Rovo MCP prerequisites are not fully configured for Copilot sessions yet."
+            exit 0
+          fi
+
+          echo "Jira Rovo MCP prerequisites are configured."
