@@ -33,5 +33,8 @@ jobs:
         env:
           PERSONAL_ACCESS_TOKEN: ${{ secrets.COPILOT_MCP_AZDO_PAT_BASIC }}
         run: |
-          test -n "$PERSONAL_ACCESS_TOKEN"
+          if [ -z "$PERSONAL_ACCESS_TOKEN" ]; then
+            echo "COPILOT_MCP_AZDO_PAT_BASIC is not set; skipping Azure DevOps MCP startup validation."
+            exit 0
+          fi
           npx -y @azure-devops/mcp ptdigital --authentication pat -d core work-items repositories wiki pipelines search --help >/dev/null
