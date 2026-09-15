@@ -20,23 +20,27 @@ The GitHub Copilot for Jira configuration page shows `PremierTechDigital` as a c
 ```mermaid
 flowchart LR
 	Jira[Jira Cloud<br/>premiertechdigital.atlassian.net]
-	Copilot[GitHub Copilot for Jira<br/>configuration]
+	Config[GitHub Copilot for Jira<br/>configuration]
 	Org[GitHub organization<br/>PremierTechDigital]
-	App[GitHub Copilot for Jira App<br/>verify installation and repository access]
-	Repo[Repository<br/>WSTEAM2]
+	App[GitHub Copilot for Jira App<br/>installed and authorized]
+	Repo[Repository<br/>PremierTechDigital/WSTEAM2<br/>main]
 	Seats[GitHub Copilot<br/>assigned seats]
-	Team[Authorized team members]
-	Validation[Jira work item shows<br/>branch and pull request]
+	Created[New Jira Bug<br/>or work item]
+	Rule[Jira Automation<br/>Work item created]
+	Agent[GitHub Copilot cloud agent<br/>Auto model]
+	PullRequest[Documentation-only<br/>pull request]
+	Activity[Agent activity shown<br/>on the Jira work item]
 
-	Jira --> Copilot
-	Copilot --> Org
+	Jira --> Config
+	Config --> Org
 	Org --> App
 	App --> Repo
 	Org --> Seats
-	Jira --> Team
-	Repo --> Team
-	Seats --> Team
-	Team --> Validation
+	Jira --> Created --> Rule --> Agent
+	Repo --> Agent
+	Seats --> Agent
+	Agent --> PullRequest
+	Agent --> Activity
 ```
 
 ## Administrator completion checklist
